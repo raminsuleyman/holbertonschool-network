@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
-sed 's/127\.0\.0\.1[[:space:]]*localhost/127.0.0.2\tlocalhost/' /etc/hosts > /tmp/hosts
-cat /tmp/hosts > /etc/hosts
-echo '8.8.8.8 facebook.com' >> /etc/hosts
+# Configure localhost and facebook.com IP addresses in the hosts file
+tmp_file=$(mktemp)
+
+grep -Ev '(^|[[:space:]])(localhost|facebook\.com)([[:space:]]|$)' /etc/hosts > "$tmp_file"
+
+echo "127.0.0.2 localhost" >> "$tmp_file"
+echo "8.8.8.8 facebook.com" >> "$tmp_file"
+
+cat "$tmp_file" > /etc/hosts
+rm -f "$tmp_file"
